@@ -1,22 +1,28 @@
-CREATE DATABASE tsalkoTAR1;
-use tsalkoTAR1;
+CREATE DATABASE filmTsalko;
+use filmTsalko;
+--tabeli rezisoor loomine
+CREATE TABLE rezisoor(
+rezisoorID int PRIMARY KEY identity (1,1),
+eesnimi varchar(20),
+perenimi varchar(20) UNIQUE,
+synnaasta int);
+Select * from rezisoor;
+--tabeli täitmine
+INSERT INTO rezisoor(eesnimi, perenimi,synnaasta)
+VALUES ('James', 'Cameron', 1987),
+('Robert', 'De Niro', 1967),
+('David', 'Lunch', 1957);
 
---tabeli loomine 
-CREATE TABLE tootaja(
-tootajaID int PRIMARY KEY identity (1,1),
-eesnimi varchar(30),
-perenimi varchar(30),
-synniaeg date,
-koormus decimal (5,2),
-elukoht TEXT,
-abielus bit
-);
---tabeli kustutamine
-drop table tootaja;
---tabeli kuvamine
-select * from tootaja;
+--tabeli film loomine
+CREATE TABLE film(
+filmID int PRIMARY KEY identity (1,1),
+filmNimetus varchar(100),
+pikkus int,
+rezisoorID int,
+Select * FROM film;
+Select * FROM rezisoor;
 
---andmete lisamine tabelisse
-INSERT INTO  tootaja(eesnimi, perenimi, synniaeg)
-VALUES ('Mark', 'Päev', '2022-10-13'),
-('Ilja', 'Päev', '2020-10-13');
+drop table rezisoor;
+
+Insert into film(filmNimetus, rezisoorID, pikkus, v_aasta)
+Values(Jurassic world, 4, 120, 1987)
