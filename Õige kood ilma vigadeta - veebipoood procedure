@@ -1,0 +1,122 @@
+-- Создание базы данных
+CREATE DATABASE veebipood2;
+GO
+USE veebipood2;
+GO
+
+-- Таблица categories
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY IDENTITY(1,1),
+    category_name VARCHAR(20)
+);
+
+-- Вставка данных в categories
+INSERT INTO categories (category_name)
+VALUES ('Dresskod');
+
+-- Таблица brands
+CREATE TABLE brands (
+    brand_id INT PRIMARY KEY IDENTITY(1,1),
+    brand_name VARCHAR(20)
+);
+
+-- Вставка данных в brands
+INSERT INTO brands (brand_name)
+VALUES ('ADIDAS');
+
+-- Таблица products
+CREATE TABLE products (
+    product_id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    product_name VARCHAR(20),
+    brand_id INT,
+    category_id INT,
+    model_year INT,
+    list_price DECIMAL(7,2),
+    FOREIGN KEY (brand_id) REFERENCES brands(brand_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+-- Вставка данных в products
+INSERT INTO products
+(product_name, brand_id, category_id, model_year, list_price)
+VALUES ('särk', 1, 1, 2020, 25.20);
+
+-- Просмотр данных
+SELECT * FROM products;
+SELECT * FROM categories;
+SELECT * FROM brands;
+
+-- UPDATE categories
+UPDATE categories 
+SET category_name = 'kingad'
+WHERE category_id = 1;
+
+
+-- PROCEDURE: добавление бренда
+
+CREATE PROCEDURE lisaBrand
+@brand_nimi VARCHAR(30)
+AS
+BEGIN
+    INSERT INTO brands (brand_name) 
+    VALUES (@brand_nimi);
+
+    SELECT * FROM brands;
+END;
+GO
+
+-- Вызов
+EXEC lisaBrand 'Audi';
+GO
+
+
+-- PROCEDURE: удаление бренда по id
+
+CREATE PROCEDURE kustutaBrand
+@id INT
+AS
+BEGIN
+    SELECT * FROM brands;
+    DELETE FROM brands WHERE brand_id = @id;
+    SELECT * FROM brands;
+END;
+GO
+
+-- Вызов
+EXEC kustutaBrand 2;
+GO
+
+
+-- PROCEDURE: поиск по первой букве
+
+CREATE PROCEDURE otsing1tahte
+@taht CHAR(1)
+AS
+BEGIN
+    SELECT * FROM brands 
+    WHERE brand_name LIKE @taht + '%';
+END;
+GO
+
+-- Вызов
+EXEC otsing1tahte 'A';
+GO
+
+
+-- PROCEDURE: обновление бренда
+
+CREATE PROCEDURE uuendaBrand
+@id INT,
+@uus_brandNimi VARCHAR(30)
+AS
+BEGIN
+    SELECT * FROM brands;
+    UPDATE brands 
+    SET brand_name = @uus_brandNimi
+    WHERE brand_id = @id;
+END;
+GO
+
+-- Вызов
+EXEC uuendaBrand 1, 'Nike';
+GO
