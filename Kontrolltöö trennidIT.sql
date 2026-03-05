@@ -39,8 +39,8 @@ CREATE TABLE Registreerimine(
 reg_id INT PRIMARY KEY IDENTITY(1,1),
 trenn_id INT NOT NULL,
 osaleja_id INT NOT NULL,
-kuupäev DATE,
-staatus VARCHAR(20) CHECK (staatus IN ('Kinnitatud', 'Ootel', 'Tühistatud')),
+kuupÃ¤ev DATE,
+staatus VARCHAR(20) CHECK (staatus IN ('Kinnitatud', 'Ootel', 'TÃ¼histatud')),
 FOREIGN KEY (trenn_id) REFERENCES Trenn(trenn_id),
 FOREIGN KEY (osaleja_id) REFERENCES Osaleja(osaleja_id)
 );
