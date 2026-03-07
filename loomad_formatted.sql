@@ -1,171 +1,133 @@
--- Создание базы данных
-CREATE DATABASE loomad;
-GO
-USE loomad;
-GO
+CREATE DATABASE loomadVarjupaik;
+USE loomadVarjupaik;
 
--- Таблица loom
-CREATE TABLE loom (
-    loom_id INT PRIMARY KEY IDENTITY(1,1),
+-- tabel Boks
+CREATE TABLE boks(
+    boks_id INT PRIMARY KEY identity(1,1),
+    nimetus VARCHAR(30),
+    asukoht VARCHAR(50),
+    mahutavus INT
+);
+
+-- tabel Vabatahtlik
+CREATE TABLE vabatahtlik(
+    vabatahtlik_id INT PRIMARY KEY identity(1,1),
     nimi VARCHAR(50),
-    liik VARCHAR(50),
-    vanus INT,
-    kaal DECIMAL(5, 2)
+    kontakt VARCHAR(30)
 );
 
--- Вставка данных в loom
-INSERT INTO loom (nimi, liik, vanus, kaal)
-VALUES ('Muxy', 'Kass', 3, 4.50);
-INSERT INTO loom (nimi, liik, vanus, kaal)
-VALUES ('Rex', 'Koer', 5, 25.00);
-INSERT INTO loom (nimi, liik, vanus, kaal)
-VALUES ('Fluffy', 'Jänes', 2, 2.30);
-INSERT INTO loom (nimi, liik, vanus, kaal)
-VALUES ('Tweety', 'Lind', 1, 0.05);
-INSERT INTO loom (nimi, liik, vanus, kaal)
-VALUES ('Nemo', 'Kala', 1, 0.10);
-
--- Таблица boks
-CREATE TABLE boks (
-    boks_id INT PRIMARY KEY IDENTITY(1,1),
-    number INT,
-    nimetus VARCHAR(50),
-    suurus VARCHAR(20)
-);
-
--- Вставка данных в boks
-INSERT INTO boks (number, nimetus, suurus)
-VALUES (1, 'Kassiboks', 'Väike');
-INSERT INTO boks (number, nimetus, suurus)
-VALUES (2, 'Koerapagas', 'Suur');
-INSERT INTO boks (number, nimetus, suurus)
-VALUES (3, 'Jänese puur', 'Keskmise');
-INSERT INTO boks (number, nimetus, suurus)
-VALUES (4, 'Linnu puur', 'Väike');
-INSERT INTO boks (number, nimetus, suurus)
-VALUES (5, 'Akvaarium', 'Suur');
-
--- Таблица koristus
-CREATE TABLE koristus (
-    koristus_id INT PRIMARY KEY IDENTITY(1,1),
-    loom_id INT,
+-- tabel Loom
+CREATE TABLE loom(
+    loom_id INT PRIMARY KEY identity(1,1),
+    liik VARCHAR(30),
+    tõug VARCHAR(30),
+    sugu CHAR(1),
+    saabumise_kuupäev DATE,
     boks_id INT,
-    kuupäev DATE,
-    FOREIGN KEY (loom_id) REFERENCES loom(loom_id),
     FOREIGN KEY (boks_id) REFERENCES boks(boks_id)
 );
 
--- Вставка данных в koristus
-INSERT INTO koristus (loom_id, boks_id, kuupäev)
-VALUES (1, 1, '2024-01-15');
-INSERT INTO koristus (loom_id, boks_id, kuupäev)
-VALUES (2, 2, '2024-02-20');
-INSERT INTO koristus (loom_id, boks_id, kuupäev)
-VALUES (3, 3, '2024-03-10');
-INSERT INTO koristus (loom_id, boks_id, kuupäev)
-VALUES (4, 4, '2024-04-05');
-INSERT INTO koristus (loom_id, boks_id, kuupäev)
-VALUES (5, 5, '2024-05-12');
-
--- Таблица vabatahtlik
-CREATE TABLE vabatahtlik (
-    vabatahtlik_id INT PRIMARY KEY IDENTITY(1,1),
-    nimi VARCHAR(50),
-    kontakt VARCHAR(20)
+-- tabel Koristus
+CREATE TABLE koristus(
+    koristus_id INT PRIMARY KEY identity(1,1),
+    loom_id INT,
+    vabatahtlik_id INT,
+    kuupäev DATE,
+    kestus INT,
+    FOREIGN KEY (loom_id) REFERENCES loom(loom_id),
+    FOREIGN KEY (vabatahtlik_id) REFERENCES vabatahtlik(vabatahtlik_id)
 );
 
--- Вставка данных в vabatahtlik
-INSERT INTO vabatahtlik (nimi, kontakt)
-VALUES ('Maria Ivanova', '5551234567');
-INSERT INTO vabatahtlik (nimi, kontakt)
-VALUES ('Jaan Tamm', '5559876543');
-INSERT INTO vabatahtlik (nimi, kontakt)
-VALUES ('Anna Petrov', '5552468135');
-INSERT INTO vabatahtlik (nimi, kontakt)
-VALUES ('Peeter Saar', '5553691472');
-INSERT INTO vabatahtlik (nimi, kontakt)
-VALUES ('Sofia Räis', '5554825936');
+-- minu lisatabel: Toit
+CREATE TABLE toit(
+    toit_id INT PRIMARY KEY identity(1,1),
+    nimetus VARCHAR(50),
+    kogus INT,
+    loom_id INT,
+    FOREIGN KEY (loom_id) REFERENCES loom(loom_id)
+);
 
--- Просмотр данных
+-- andmete lisamine boks
+INSERT INTO boks(nimetus, asukoht, mahutavus)
+VALUES ('Boks A', 'Vasak tiib', 3),
+       ('Boks B', 'Parem tiib', 2),
+       ('Boks C', 'Keskmine ala', 4),
+       ('Boks D', 'Tagumine ruum', 1),
+       ('Boks E', 'Uksest paremal', 2);
+
+-- vabatahtlikud
+INSERT INTO vabatahtlik(nimi, kontakt)
+VALUES ('Mari', '555-111'),
+       ('Jaan', '555-222'),
+       ('Kertu', '555-333'),
+       ('Mark', '555-444'),
+       ('Anna', '555-555');
+
+-- loomad
+INSERT INTO loom(liik, tõug, sugu, saabumise_kuupäev, boks_id)
+VALUES ('Koer', 'Labrador', 'M', '2024-01-05', 1),
+       ('Kass', 'Maine Coon', 'N', '2024-01-10', 2),
+       ('Koer', 'Husky', 'M', '2024-01-12', 3),
+       ('Kass', 'Siiam', 'N', '2024-01-15', 4),
+       ('Jänes', 'Valge', 'M', '2024-01-20', 5);
+
+-- koristused
+INSERT INTO koristus(loom_id, vabatahtlik_id, kuupäev, kestus)
+VALUES (1, 1, '2024-02-01', 30),
+       (2, 2, '2024-02-02', 25),
+       (3, 3, '2024-02-03', 40),
+       (4, 4, '2024-02-04', 20),
+       (5, 5, '2024-02-05', 15);
+
+-- toit
+INSERT INTO toit(nimetus, kogus, loom_id)
+VALUES ('Koeratoit', 5, 1),
+       ('Kassitoit', 3, 2),
+       ('Koeratoit', 4, 3),
+       ('Kassitoit', 2, 4),
+       ('Jänesetoit', 1, 5);
+
 SELECT * FROM loom;
 SELECT * FROM boks;
-SELECT * FROM koristus;
 SELECT * FROM vabatahtlik;
+SELECT * FROM koristus;
+SELECT * FROM toit;
 
--- UPDATE loom
-UPDATE loom 
-SET vanus = 4
-WHERE loom_id = 1;
-
-
--- PROCEDURE: добавление животного
-
+-- protseduur 1: lisa loom
 CREATE PROCEDURE lisaLoom
-@nimi VARCHAR(50),
-@liik VARCHAR(50),
-@vanus INT,
-@kaal DECIMAL(5, 2)
+@liik VARCHAR(30),
+@tõug VARCHAR(30),
+@sugu CHAR(1),
+@kuup DATE,
+@boks INT
 AS
 BEGIN
-    INSERT INTO loom (nimi, liik, vanus, kaal) 
-    VALUES (@nimi, @liik, @vanus, @kaal);
+    INSERT INTO loom(liik, tõug, sugu, saabumise_kuupäev, boks_id)
+    VALUES (@liik, @tõug, @sugu, @kuup, @boks);
 
     SELECT * FROM loom;
 END;
-GO
 
--- Вызов
-EXEC lisaLoom 'Bella', 'Kass', 2, 3.50;
-GO
+-- protseduur 2: otsi loomi soo järgi
+CREATE PROCEDURE otsiSugu
+@s CHAR(1)
+AS
+BEGIN
+    SELECT * FROM loom WHERE sugu = @s;
+END;
 
-
--- PROCEDURE: удаление животного по id
-
-CREATE PROCEDURE kustutaLoom
+-- protseduur 3: näita koristusi looma järgi
+CREATE PROCEDURE koristusedLoomaJargi
 @id INT
 AS
 BEGIN
-    SELECT * FROM loom;
-    DELETE FROM loom WHERE loom_id = @id;
-    SELECT * FROM loom;
+    SELECT k.koristus_id, k.kuupäev, k.kestus, v.nimi
+    FROM koristus k
+    JOIN vabatahtlik v ON k.vabatahtlik_id = v.vabatahtlik_id
+    WHERE k.loom_id = @id;
 END;
-GO
 
--- Вызов
-EXEC kustutaLoom 6;
-GO
-
-
--- PROCEDURE: поиск животного по первой букве
-
-CREATE PROCEDURE otsiLoom
-@taht CHAR(1)
-AS
-BEGIN
-    SELECT * FROM loom 
-    WHERE nimi LIKE @taht + '%';
-END;
-GO
-
--- Вызов
-EXEC otsiLoom 'M';
-GO
-
-
--- PROCEDURE: обновление животного
-
-CREATE PROCEDURE uuendaLoom
-@id INT,
-@uus_nimi VARCHAR(50)
-AS
-BEGIN
-    SELECT * FROM loom;
-    UPDATE loom 
-    SET nimi = @uus_nimi
-    WHERE loom_id = @id;
-END;
-GO
-
--- Вызов
-EXEC uuendaLoom 1, 'Muxik';
-GO
+-- kutsed
+EXEC lisaLoom 'Koer', 'Mops', 'M', '2024-02-10', 1;
+EXEC otsiSugu 'N';
+EXEC koristusedLoomaJargi 2;
