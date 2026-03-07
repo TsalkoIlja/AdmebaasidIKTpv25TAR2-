@@ -26,7 +26,7 @@ VALUES ('ADIDAS');
 
 -- Таблица products
 CREATE TABLE products (
-    product_id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    product_id INT PRIMARY KEY IDENTITY(1,1),
     product_name VARCHAR(20),
     brand_id INT,
     category_id INT,
@@ -37,8 +37,7 @@ CREATE TABLE products (
 );
 
 -- Вставка данных в products
-INSERT INTO products
-(product_name, brand_id, category_id, model_year, list_price)
+INSERT INTO products (product_name, brand_id, category_id, model_year, list_price)
 VALUES ('särk', 1, 1, 2020, 25.20);
 
 -- Просмотр данных
@@ -51,14 +50,14 @@ UPDATE categories
 SET category_name = 'kingad'
 WHERE category_id = 1;
 
-
+---------------------------------------------------------
 -- PROCEDURE: добавление бренда
-
+---------------------------------------------------------
 CREATE PROCEDURE lisaBrand
 @brand_nimi VARCHAR(30)
 AS
 BEGIN
-    INSERT INTO brands (brand_name) 
+    INSERT INTO brands (brand_name)
     VALUES (@brand_nimi);
 
     SELECT * FROM brands;
@@ -69,9 +68,9 @@ GO
 EXEC lisaBrand 'Audi';
 GO
 
-
+---------------------------------------------------------
 -- PROCEDURE: удаление бренда по id
-
+---------------------------------------------------------
 CREATE PROCEDURE kustutaBrand
 @id INT
 AS
@@ -86,14 +85,14 @@ GO
 EXEC kustutaBrand 2;
 GO
 
-
+---------------------------------------------------------
 -- PROCEDURE: поиск по первой букве
-
+---------------------------------------------------------
 CREATE PROCEDURE otsing1tahte
 @taht CHAR(1)
 AS
 BEGIN
-    SELECT * FROM brands 
+    SELECT * FROM brands
     WHERE brand_name LIKE @taht + '%';
 END;
 GO
@@ -102,18 +101,21 @@ GO
 EXEC otsing1tahte 'A';
 GO
 
-
+---------------------------------------------------------
 -- PROCEDURE: обновление бренда
-
+---------------------------------------------------------
 CREATE PROCEDURE uuendaBrand
 @id INT,
 @uus_brandNimi VARCHAR(30)
 AS
 BEGIN
     SELECT * FROM brands;
-    UPDATE brands 
+
+    UPDATE brands
     SET brand_name = @uus_brandNimi
     WHERE brand_id = @id;
+
+    SELECT * FROM brands;
 END;
 GO
 
