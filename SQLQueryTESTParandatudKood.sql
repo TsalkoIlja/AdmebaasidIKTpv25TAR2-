@@ -1,134 +1,135 @@
-CREATE DATABASE Tsalko1;
-GO
-use Tsalko1;
-GO
+CREATE DATABASE raamatukoguIT;
+USE raamatukoguIT;
 
---TABEL LUGEJA
-Create table lugeja(
-lugeja_id int primary key identity(1,1),
-name varchar(30) UNIQUE,
-kontakt varchar(100),              
-registreeritud date DEFAULT GETDATE()   
-);
-INSERT INTO lugeja(name, kontakt)
-VALUES 
-('Mari', '5567785'),
-('Jaan', '5561111'),
-('Kati', '5562222'),
-('Peeter', '5563333'),
-('Liisa', '5564444');
-
-SELECT * FROM lugeja;
-
---TABEL ZANR
+-- tabel Žanr
 CREATE TABLE zanr(
-zanrID int PRIMARY KEY identity (1,1),
-zanrNimetus varchar(50) UNIQUE NOT NULL,
-kirjeldus varchar(200)
+    zanr_id INT PRIMARY KEY identity(1,1),
+    nimetus VARCHAR(50),
+    kirjeldus TEXT
 );
-INSERT INTO zanr(zanrNimetus, kirjeldus)
-VALUES 
-('seiklus', 'on põnev roman'),
-('romaan', 'armastuslugu'),
-('ulme', 'teaduslik fantaasia'),
-('krimi', 'kriminaallugu'),
-('laste', 'lasteraamat');
+
+-- tabel Raamat
+CREATE TABLE raamat(
+    raamat_id INT PRIMARY KEY identity(1,1),
+    pealkiri VARCHAR(100),
+    zanr_id INT,
+    hind DECIMAL(6,2),
+    isbn VARCHAR(20),
+    FOREIGN KEY (zanr_id) REFERENCES zanr(zanr_id)
+);
+
+-- tabel Lugeja
+CREATE TABLE lugeja(
+    lugeja_id INT PRIMARY KEY identity(1,1),
+    nimi VARCHAR(50),
+    kontakt VARCHAR(30),
+    registreeritud DATE
+);
+
+-- tabel Laenutus
+CREATE TABLE laenutus(
+    laenutus_id INT PRIMARY KEY identity(1,1),
+    raamat_id INT,
+    lugeja_id INT,
+    kogus INT,
+    ühik VARCHAR(10),
+    laenutuse_kuupäev DATE,
+    FOREIGN KEY (raamat_id) REFERENCES raamat(raamat_id),
+    FOREIGN KEY (lugeja_id) REFERENCES lugeja(lugeja_id)
+);
+
+-- minu lisatabel: Tagastus
+CREATE TABLE tagastus(
+    tagastus_id INT PRIMARY KEY identity(1,1),
+    laenutus_id INT,
+    kuupäev DATE,
+    seisukord VARCHAR(50),
+    FOREIGN KEY (laenutus_id) REFERENCES laenutus(laenutus_id)
+);
+
+-- andmete lisamine zanr
+INSERT INTO zanr(nimetus, kirjeldus)
+VALUES ('Ulme', 'Kosmos, tulevik, tehnoloogia'),
+       ('Krimi', 'Detektiivid ja uurimised'),
+       ('Fantaasia', 'Maagia ja müüdid'),
+       ('Draama', 'Tõsine kirjandus'),
+       ('Õudus', 'Hirmutavad lood');
+
+-- raamatud
+INSERT INTO raamat(pealkiri, zanr_id, hind, isbn)
+VALUES ('Düün', 1, 19.99, 'ISBN111'),
+       ('Sherlock Holmes', 2, 14.50, 'ISBN222'),
+       ('Sõrmuste Isand', 3, 25.00, 'ISBN333'),
+       ('Vennad Karamazovid', 4, 18.75, 'ISBN444'),
+       ('IT', 5, 22.40, 'ISBN555');
+
+-- lugejad
+INSERT INTO lugeja(nimi, kontakt, registreeritud)
+VALUES ('Maria', '555-111', '2024-01-01'),
+       ('Ilja', '555-222', '2024-01-05'),
+       ('Anna', '555-333', '2024-01-10'),
+       ('Markus', '555-444', '2024-01-15'),
+       ('Katrin', '555-555', '2024-01-20');
+
+-- laenutused
+INSERT INTO laenutus(raamat_id, lugeja_id, kogus, ühik, laenutuse_kuupäev)
+VALUES (1, 1, 1, 'tk', '2024-02-01'),
+       (2, 2, 1, 'tk', '2024-02-02'),
+       (3, 3, 1, 'tk', '2024-02-03'),
+       (4, 4, 1, 'tk', '2024-02-04'),
+       (5, 5, 1, 'tk', '2024-02-05');
+
+-- tagastused
+INSERT INTO tagastus(laenutus_id, kuupäev, seisukord)
+VALUES (1, '2024-02-10', 'Hea'),
+       (2, '2024-02-12', 'Rahuldav'),
+       (3, '2024-02-15', 'Hea'),
+       (4, '2024-02-18', 'Väga hea'),
+       (5, '2024-02-20', 'Kahjustatud');
 
 SELECT * FROM zanr;
-
---TABEL RAAMAT
-CREATE TABLE raamat(
-raamatu_id int not null primary key identity(1,1),
-pealkiri varchar(50) UNIQUE NOT NULL,
-zanr_id int NOT NULL,
-hind decimal(6,2) CHECK (hind > 0),  
-isbn varchar(20) UNIQUE,
-
-CONSTRAINT fk_zanr
-FOREIGN KEY (zanr_id) REFERENCES zanr(zanrID)   
-);
-INSERT INTO raamat
-(pealkiri, zanr_id, hind, isbn)
-VALUES 
-('Sipsik', 1, 20, '111'),
-('Kevade', 2, 15, '222'),
-('Tulnukas', 3, 25, '333'),
-('Detektiiv', 4, 18, '444'),
-('Naksitrallid', 5, 22, '555');
-
 SELECT * FROM raamat;
-
---TABEL LAENUTUS
-CREATE TABLE laenutus(
-laenutus_id int primary key identity(1,1),
-raamatu_id int NOT NULL,
-lugeja_id int NOT NULL,
-kogus int CHECK (kogus > 0),
-uhik varchar(10) DEFAULT 'tk',
-laenutuse_kuupaev date DEFAULT GETDATE(),
-
-CONSTRAINT fk_raamat
-FOREIGN KEY (raamatu_id) REFERENCES raamat(raamatu_id),
-
-CONSTRAINT fk_lugeja
-FOREIGN KEY (lugeja_id) REFERENCES lugeja(lugeja_id)
-);
-INSERT INTO laenutus(raamatu_id, lugeja_id, kogus)
-VALUES
-(1,1,1),
-(2,2,1),
-(3,3,2),
-(4,4,1),
-(5,5,1);
-
-SELECT * FROM laenutus;
-GO
-
---3 STORED PROCEDURES
-
--- 1. Lisa uus lugeja
-
-CREATE PROCEDURE lisaLugeja
-@nimi VARCHAR(30),
-@kontakt VARCHAR(100)
-AS
-BEGIN
-INSERT INTO lugeja (name, kontakt)  
-VALUES (@nimi, @kontakt);
-
 SELECT * FROM lugeja;
-END;
-GO
+SELECT * FROM laenutus;
+SELECT * FROM tagastus;
 
--- Вызов
-EXEC lisaLugeja 'Liisa', 'liisa@email.com';
-GO
-
-
--- 2. Kustuta raamat
-CREATE PROCEDURE kustutaRaamat
-@id int
+-- protseduur 1: lisa uus raamat
+CREATE PROCEDURE lisaRaamat
+@pealkiri VARCHAR(100),
+@zanr INT,
+@hind DECIMAL(6,2),
+@isbn VARCHAR(20)
 AS
 BEGIN
-DELETE FROM raamat
-WHERE raamatu_id = @id;
+    INSERT INTO raamat(pealkiri, zanr_id, hind, isbn)
+    VALUES (@pealkiri, @zanr, @hind, @isbn);
 
-SELECT * FROM raamat;
+    SELECT * FROM raamat;
 END;
-GO
 
-
--- 3. Otsi raamat esimese tähe järgi
-CREATE PROCEDURE otsiRaamat
-@taht char(1)
+-- protseduur 2: otsi raamat žanri järgi
+CREATE PROCEDURE otsiZanr
+@z INT
 AS
 BEGIN
-SELECT * FROM raamat
-WHERE pealkiri LIKE @taht + '%';
+    SELECT r.pealkiri, z.nimetus, r.hind
+    FROM raamat r
+    JOIN zanr z ON r.zanr_id = z.zanr_id
+    WHERE r.zanr_id = @z;
 END;
-GO
 
+-- protseduur 3: näita laenutusi lugeja järgi
+CREATE PROCEDURE laenutusedLugeja
+@id INT
+AS
+BEGIN
+    SELECT l.laenutus_id, r.pealkiri, l.laenutuse_kuupäev
+    FROM laenutus l
+    JOIN raamat r ON l.raamat_id = r.raamat_id
+    WHERE l.lugeja_id = @id;
+END;
 
--- TEST
-EXEC lisaLugeja 'Test', '999999';
-EXEC otsiRaamat 'S';
+-- kutsed
+EXEC lisaRaamat 'Testiraamat', 1, 10.50, 'ISBN999';
+EXEC otsiZanr 3;
+EXEC laenutusedLugeja 2;
