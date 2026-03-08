@@ -1,32 +1,67 @@
-CREATE DATABASE trennidIT;
-USE trennidIT;
+CREATE DATABASE trennidIT_uus;
+USE trennidIT_uus;
 
--- tabel Treener
+---------------------------------------------------------
+-- Treener (создание + заполнение + просмотр)
+---------------------------------------------------------
 CREATE TABLE treener(
     treener_id INT PRIMARY KEY identity(1,1),
-    nimi VARCHAR(50),
+    nimi VARCHAR(50) NOT NULL,
     kontakt VARCHAR(30)
 );
 
--- tabel Trenn
+INSERT INTO treener(nimi, kontakt)
+VALUES ('Marko', '555-111'),
+       ('Anna', '555-222'),
+       ('Jaan', '555-333'),
+       ('Mari', '555-444'),
+       ('Kert', '555-555');
+
+SELECT * FROM treener;
+
+---------------------------------------------------------
+-- Trenn (создание + заполнение + просмотр)
+---------------------------------------------------------
 CREATE TABLE trenn(
     trenn_id INT PRIMARY KEY identity(1,1),
-    nimetus VARCHAR(50),
+    nimetus VARCHAR(50) NOT NULL,
     tüüp VARCHAR(30),
     raskustase VARCHAR(20),
     treener_id INT,
     FOREIGN KEY (treener_id) REFERENCES treener(treener_id)
 );
 
--- tabel Osaleja
+INSERT INTO trenn(nimetus, tüüp, raskustase, treener_id)
+VALUES ('Jooga', 'Rahulik', 'Kerge', 1),
+       ('Box', 'Võitlus', 'Keskmine', 2),
+       ('Pilates', 'Venitus', 'Kerge', 3),
+       ('CrossFit', 'Jõud', 'Raske', 4),
+       ('Zumba', 'Tants', 'Keskmine', 5);
+
+SELECT * FROM trenn;
+
+---------------------------------------------------------
+-- Osaleja (создание + заполнение + просмотр)
+---------------------------------------------------------
 CREATE TABLE osaleja(
     osaleja_id INT PRIMARY KEY identity(1,1),
-    nimi VARCHAR(50),
-    vanus INT,
+    nimi VARCHAR(50) NOT NULL,
+    vanus INT CHECK(vanus > 0),
     telefon VARCHAR(20)
 );
 
--- tabel Registreerimine
+INSERT INTO osaleja(nimi, vanus, telefon)
+VALUES ('Maria', 25, '111'),
+       ('Ilja', 30, '222'),
+       ('Anna', 19, '333'),
+       ('Markus', 40, '444'),
+       ('Katrin', 33, '555');
+
+SELECT * FROM osaleja;
+
+---------------------------------------------------------
+-- Registreerimine (создание + заполнение + просмотр)
+---------------------------------------------------------
 CREATE TABLE registreerimine(
     reg_id INT PRIMARY KEY identity(1,1),
     trenn_id INT,
@@ -37,40 +72,6 @@ CREATE TABLE registreerimine(
     FOREIGN KEY (osaleja_id) REFERENCES osaleja(osaleja_id)
 );
 
--- minu lisatabel: Varustus
-CREATE TABLE varustus(
-    varustus_id INT PRIMARY KEY identity(1,1),
-    nimetus VARCHAR(50),
-    kogus INT,
-    trenn_id INT,
-    FOREIGN KEY (trenn_id) REFERENCES trenn(trenn_id)
-);
-
--- andmete lisamine treener
-INSERT INTO treener(nimi, kontakt)
-VALUES ('Marko', '555-111'),
-       ('Anna', '555-222'),
-       ('Jaan', '555-333'),
-       ('Mari', '555-444'),
-       ('Kert', '555-555');
-
--- trennid
-INSERT INTO trenn(nimetus, tüüp, raskustase, treener_id)
-VALUES ('Jooga', 'Rahulik', 'Kerge', 1),
-       ('Box', 'Võitlus', 'Keskmine', 2),
-       ('Pilates', 'Venitus', 'Kerge', 3),
-       ('CrossFit', 'Jõud', 'Raske', 4),
-       ('Zumba', 'Tants', 'Keskmine', 5);
-
--- osalejad
-INSERT INTO osaleja(nimi, vanus, telefon)
-VALUES ('Maria', 25, '111'),
-       ('Ilja', 30, '222'),
-       ('Anna', 19, '333'),
-       ('Markus', 40, '444'),
-       ('Katrin', 33, '555');
-
--- registreerimised
 INSERT INTO registreerimine(trenn_id, osaleja_id, kuupäev, staatus)
 VALUES (1, 1, '2024-01-05', 'Kinnitatud'),
        (2, 2, '2024-01-06', 'Ootel'),
@@ -78,21 +79,33 @@ VALUES (1, 1, '2024-01-05', 'Kinnitatud'),
        (4, 4, '2024-01-08', 'Tühistatud'),
        (5, 5, '2024-01-09', 'Kinnitatud');
 
--- varustus
-INSERT INTO varustus(nimetus, kogus, trenn_id)
-VALUES ('Matid', 20, 1),
-       ('Köied', 10, 4),
-       ('Pallid', 12, 5),
-       ('Kummid', 15, 3),
-       ('Kettad', 30, 4);
-
-SELECT * FROM treener;
-SELECT * FROM trenn;
-SELECT * FROM osaleja;
 SELECT * FROM registreerimine;
-SELECT * FROM varustus;
 
--- protseduur 1: lisa osaleja
+---------------------------------------------------------
+-- Minu lisatabel: Saal (создание + заполнение + просмотр)
+---------------------------------------------------------
+CREATE TABLE saal(
+    saal_id INT PRIMARY KEY identity(1,1),
+    nimetus VARCHAR(50),
+    mahutavus INT,
+    trenn_id INT,
+    FOREIGN KEY (trenn_id) REFERENCES trenn(trenn_id)
+);
+
+INSERT INTO saal(nimetus, mahutavus, trenn_id)
+VALUES ('Suur saal', 30, 1),
+       ('Võitlussaal', 20, 2),
+       ('Pilates ruum', 15, 3),
+       ('CrossFit hall', 25, 4),
+       ('Tantsusaal', 40, 5);
+
+SELECT * FROM saal;
+
+---------------------------------------------------------
+-- ПРОЦЕДУРЫ
+---------------------------------------------------------
+
+-- 1) Добавление нового участника
 CREATE PROCEDURE lisaOsaleja
 @nimi VARCHAR(50),
 @vanus INT,
@@ -105,7 +118,7 @@ BEGIN
     SELECT * FROM osaleja;
 END;
 
--- protseduur 2: otsi trenn raskustaseme järgi
+-- 2) Поиск тренировок по уровню сложности
 CREATE PROCEDURE otsiTrenn
 @tase VARCHAR(20)
 AS
@@ -114,7 +127,7 @@ BEGIN
     WHERE raskustase = @tase;
 END;
 
--- protseduur 3: näita registreerimisi osaleja järgi
+-- 3) Показать регистрации по участнику
 CREATE PROCEDURE naitaReg
 @osaleja INT
 AS
@@ -125,7 +138,9 @@ BEGIN
     WHERE r.osaleja_id = @osaleja;
 END;
 
--- kutsed
+---------------------------------------------------------
+-- ВЫЗОВЫ ПРОЦЕДУР
+---------------------------------------------------------
 EXEC lisaOsaleja 'Test', 20, '999';
 EXEC otsiTrenn 'Kerge';
 EXEC naitaReg 1;
