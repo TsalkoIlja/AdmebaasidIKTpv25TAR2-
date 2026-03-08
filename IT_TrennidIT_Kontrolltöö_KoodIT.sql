@@ -1,8 +1,8 @@
-CREATE DATABASE trennidIT_uus2;
-USE trennidIT_uus2;
+CREATE DATABASE trennidTeacherStyle;
+USE trennidTeacherStyle;
 
 ---------------------------------------------------------
--- Treener
+-- Treener (создание + заполнение + просмотр)
 ---------------------------------------------------------
 CREATE TABLE treener(
     treener_id INT PRIMARY KEY identity(1,1),
@@ -20,7 +20,7 @@ VALUES ('Marko', '555-111'),
 SELECT * FROM treener;
 
 ---------------------------------------------------------
--- Trenn
+-- Trenn (создание + заполнение + просмотр)
 ---------------------------------------------------------
 CREATE TABLE trenn(
     trenn_id INT PRIMARY KEY identity(1,1),
@@ -41,7 +41,7 @@ VALUES ('Jooga', 'Rahulik', 'Kerge', 1),
 SELECT * FROM trenn;
 
 ---------------------------------------------------------
--- Osaleja
+-- Osaleja (создание + заполнение + просмотр)
 ---------------------------------------------------------
 CREATE TABLE osaleja(
     osaleja_id INT PRIMARY KEY identity(1,1),
@@ -60,7 +60,7 @@ VALUES ('Maria', 25, '111'),
 SELECT * FROM osaleja;
 
 ---------------------------------------------------------
--- Registreerimine
+-- Registreerimine (создание + заполнение + просмотр)
 ---------------------------------------------------------
 CREATE TABLE registreerimine(
     reg_id INT PRIMARY KEY identity(1,1),
@@ -82,7 +82,7 @@ VALUES (1, 1, '2024-01-05', 'Kinnitatud'),
 SELECT * FROM registreerimine;
 
 ---------------------------------------------------------
--- Minu lisatabel: Saal
+-- Minu lisatabel: Saal (создание + заполнение + просмотр)
 ---------------------------------------------------------
 CREATE TABLE saal(
     saal_id INT PRIMARY KEY identity(1,1),
@@ -102,10 +102,8 @@ VALUES ('Suur saal', 30, 1),
 SELECT * FROM saal;
 
 ---------------------------------------------------------
--- ПРОЦЕДУРЫ
+-- PROCEDURE 1: lisa osaleja
 ---------------------------------------------------------
-
--- 1) lisa osaleja
 CREATE PROCEDURE lisaOsaleja
 @nimi VARCHAR(50),
 @vanus INT,
@@ -117,8 +115,14 @@ BEGIN
 
     SELECT * FROM osaleja;
 END;
+GO
 
--- 2) otsi trenn raskustaseme järgi
+EXEC lisaOsaleja 'Test', 20, '999';
+GO
+
+---------------------------------------------------------
+-- PROCEDURE 2: otsi trenn raskustaseme järgi
+---------------------------------------------------------
 CREATE PROCEDURE otsiTrenn
 @tase VARCHAR(20)
 AS
@@ -126,8 +130,14 @@ BEGIN
     SELECT * FROM trenn
     WHERE raskustase = @tase;
 END;
+GO
 
--- 3) näita registreerimisi osaleja järgi
+EXEC otsiTrenn 'Kerge';
+GO
+
+---------------------------------------------------------
+-- PROCEDURE 3: näita registreerimisi osaleja järgi
+---------------------------------------------------------
 CREATE PROCEDURE naitaReg
 @osaleja INT
 AS
@@ -137,12 +147,11 @@ BEGIN
     JOIN trenn t ON r.trenn_id = t.trenn_id
     WHERE r.osaleja_id = @osaleja;
 END;
+GO
 
----------------------------------------------------------
--- kutsed
----------------------------------------------------------
-EXEC lisaOsaleja 'Test', 20, '999';
-EXEC otsiTrenn 'Kerge';
 EXEC naitaReg 1;
+GO
+
+
 
 
