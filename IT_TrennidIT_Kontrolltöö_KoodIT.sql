@@ -1,12 +1,12 @@
-CREATE DATABASE trennidIT_uus;
-USE trennidIT_uus;
+CREATE DATABASE trennidIT_uus2;
+USE trennidIT_uus2;
 
 ---------------------------------------------------------
--- Treener (создание + заполнение + просмотр)
+-- Treener
 ---------------------------------------------------------
 CREATE TABLE treener(
     treener_id INT PRIMARY KEY identity(1,1),
-    nimi VARCHAR(50) NOT NULL,
+    nimi VARCHAR(50),
     kontakt VARCHAR(30)
 );
 
@@ -20,11 +20,11 @@ VALUES ('Marko', '555-111'),
 SELECT * FROM treener;
 
 ---------------------------------------------------------
--- Trenn (создание + заполнение + просмотр)
+-- Trenn
 ---------------------------------------------------------
 CREATE TABLE trenn(
     trenn_id INT PRIMARY KEY identity(1,1),
-    nimetus VARCHAR(50) NOT NULL,
+    nimetus VARCHAR(50),
     tüüp VARCHAR(30),
     raskustase VARCHAR(20),
     treener_id INT,
@@ -41,12 +41,12 @@ VALUES ('Jooga', 'Rahulik', 'Kerge', 1),
 SELECT * FROM trenn;
 
 ---------------------------------------------------------
--- Osaleja (создание + заполнение + просмотр)
+-- Osaleja
 ---------------------------------------------------------
 CREATE TABLE osaleja(
     osaleja_id INT PRIMARY KEY identity(1,1),
-    nimi VARCHAR(50) NOT NULL,
-    vanus INT CHECK(vanus > 0),
+    nimi VARCHAR(50),
+    vanus INT,
     telefon VARCHAR(20)
 );
 
@@ -60,7 +60,7 @@ VALUES ('Maria', 25, '111'),
 SELECT * FROM osaleja;
 
 ---------------------------------------------------------
--- Registreerimine (создание + заполнение + просмотр)
+-- Registreerimine
 ---------------------------------------------------------
 CREATE TABLE registreerimine(
     reg_id INT PRIMARY KEY identity(1,1),
@@ -82,7 +82,7 @@ VALUES (1, 1, '2024-01-05', 'Kinnitatud'),
 SELECT * FROM registreerimine;
 
 ---------------------------------------------------------
--- Minu lisatabel: Saal (создание + заполнение + просмотр)
+-- Minu lisatabel: Saal
 ---------------------------------------------------------
 CREATE TABLE saal(
     saal_id INT PRIMARY KEY identity(1,1),
@@ -105,7 +105,7 @@ SELECT * FROM saal;
 -- ПРОЦЕДУРЫ
 ---------------------------------------------------------
 
--- 1) Добавление нового участника
+-- 1) lisa osaleja
 CREATE PROCEDURE lisaOsaleja
 @nimi VARCHAR(50),
 @vanus INT,
@@ -118,7 +118,7 @@ BEGIN
     SELECT * FROM osaleja;
 END;
 
--- 2) Поиск тренировок по уровню сложности
+-- 2) otsi trenn raskustaseme järgi
 CREATE PROCEDURE otsiTrenn
 @tase VARCHAR(20)
 AS
@@ -127,7 +127,7 @@ BEGIN
     WHERE raskustase = @tase;
 END;
 
--- 3) Показать регистрации по участнику
+-- 3) näita registreerimisi osaleja järgi
 CREATE PROCEDURE naitaReg
 @osaleja INT
 AS
@@ -139,8 +139,10 @@ BEGIN
 END;
 
 ---------------------------------------------------------
--- ВЫЗОВЫ ПРОЦЕДУР
+-- kutsed
 ---------------------------------------------------------
 EXEC lisaOsaleja 'Test', 20, '999';
 EXEC otsiTrenn 'Kerge';
 EXEC naitaReg 1;
+
+
