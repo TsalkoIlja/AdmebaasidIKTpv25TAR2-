@@ -26,18 +26,18 @@ CREATE TABLE loom(
 
 INSERT INTO loom(nimi, kaal, lapsID)
 VALUES  ('koer Musa', 5, 1), ('Kass Muu', 5, 1),
-('hamster Test', 1, 2), ('Jänes Lill', 2, 2);
+('hamster Test', 1, 2), ('JÃ¤nes Lill', 2, 2);
 
 SELECT * FROM loom;
 SELECT * FROM laps;
---select lause 2 seotud tabelite põhjal 
+--select lause 2 seotud tabelite pÃµhjal 
 SELECT * FROM laps INNER JOIN loom
 ON laps.lapsID=loom.lapsID;
 --kitsaim variant
 SELECT  l.nimi, lm.nimi  FROM laps l INNER JOIN loom lm
 ON l.lapsID=lm.lapsID;
 
---salvestame päring view abil
+--salvestame pÃ¤ring view abil
 CREATE VIEW sisestatud_lapsiloomad AS
 SELECT  l.nimi as lapsNimi, lm.nimi  as loomNimi
 FROM laps l INNER JOIN loom lm
@@ -71,7 +71,7 @@ ADD CONSTRAINT fk_varjupaik
 FOREIGN KEY (varjupaikID) REFERENCES varjupaik(varjupaikID);
 
 INSERT INTO varjupaik(koht, firma)
-VALUES ('Paljassaare', 'Varjupaikade MTÜ');
+VALUES ('Paljassaare', 'Varjupaikade MTÃœ');
 
 
 UPDATE loom 
@@ -89,40 +89,65 @@ AND l.varjupaikID = v.varjupaikID;
 Select * from lapseloomadVarjupaigas;
 --dbo - database object
 
---Tee view, kus on ainult kassid
-CREATE VIEW kassid AS
-SELECT * from loom
-WHERE nimi like 'kass%';
+-- VIEW: ainult kassid
 
-select * from kassid;
---Tee view, kus on lapsed alla 16 aastat
+CREATE VIEW kassid AS
+SELECT * FROM loom
+WHERE nimi LIKE 'Kass%';
+
+SELECT * FROM kassid;
+
+
+-- VIEW: lapsed alla 16 (2026 seisuga)
+
+
 CREATE VIEW LapsedAlla16 AS
-SELECT nimi, synniaasta (2026 synniaasta) AS Vanus FROM Laps
-WHERE synniaasta >=2008;
+SELECT nimi,
+       (2026 - synniaasta) AS Vanus
+FROM laps
+WHERE synniaasta >= 2010;  -- 2026 - 16 = 2010
 
 SELECT * FROM LapsedAlla16;
 
---view mis arvutab keskmine loomakaal
-create view keskminekaal AS
-select AVG(kaal) as keskmineKaal from loom;
-Select * from keskminekaal;
 
--- Loome vaate, mis näitab lapsi, kellel on rohkem kui 1 loom
+-- VIEW: keskmine loomakaal
+
+
+CREATE VIEW keskminekaal AS
+SELECT AVG(kaal) AS keskmineKaal
+FROM loom;
+
+SELECT * FROM keskminekaal;
+
+
+-- VIEW: lapsed, kellel on rohkem kui 1 loom
+
+
 INSERT INTO loom (nimi, kaal, lapsID)
-VALUES
-('Koer Nusya', 20, 1);
+VALUES ('Koer Nusya', 20, 1);
 
-CREATE view LapsiKellelOnRohkemKui1Loom as
-SELECT la.nimi as LapsNimi, Count(lo.nimi) as CountLoom
-FROM laps la INNER JOIN loom lo
-ON la.lapsID=lo.lapsID
-WHERE Count(lo.nimi) > 1
-GROUP BY la.nimi;
+CREATE VIEW LapsiKellelOnRohkemKui1Loom AS
+SELECT la.nimi AS LapsNimi,
+       COUNT(lo.loomID) AS CountLoom
+FROM laps la
+JOIN loom lo ON la.lapsID = lo.lapsID
+GROUP BY la.nimi
+HAVING COUNT(lo.loomID) > 1;
+
+SELECT * FROM LapsiKellelOnRohkemKui1Loom;
+
+
+-- VIEW: loomad (updateable)
 
 CREATE VIEW loomad AS
-SELECT nimi, kaal from loom;
+SELECT loomID, nimi, kaal
+FROM loom;
 
-select * from loom;
 SELECT * FROM loomad;
--- suurendame kaal 10% võrra
-UPDATE loomad SET kaal =kaal*2;
+
+
+-- KAALU SUURENDAMINE 10%
+
+
+UPDATE loom
+SET kaal = kaal * 1.1;   -- view kaudu ei saa, tabeli kaudu saab
