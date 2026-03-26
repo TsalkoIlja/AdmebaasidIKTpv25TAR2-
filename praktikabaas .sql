@@ -8,7 +8,7 @@ CREATE TABLE firma(
 );
 
 INSERT INTO firma (firmanimi, aadress, telefon) VALUES
-('TechLine', 'Pärnu mnt 10', '55512345'),
+('TechLine', 'PÃ¤rnu mnt 10', '55512345'),
 ('DataHub', 'Tartu mnt 55', '55567890'),
 ('AlphaSoft', 'Narva mnt 3', '55598765'),
 ('BalticCode', 'Suur-Ameerika 12', '55511122'),
@@ -28,7 +28,7 @@ INSERT INTO praktikajuhendaja (eesnimi, perekonnanimi, synniaeg, telefon) VALUES
 ('Marek', 'Tamm', '1985-09-12', '55544411'),
 ('Katrin', 'Kask', '1990-03-22', '55544422'),
 ('Andres', 'Mets', '1978-11-05', '55544433'),
-('Liisa', 'Põld', '1988-07-19', '55544444'),
+('Liisa', 'PÃµld', '1988-07-19', '55544444'),
 ('Ilja', 'Vaher', '2009-10-30', '55544455');
 
 Select * From praktikajuhendaja;
@@ -44,18 +44,18 @@ CREATE TABLE praktikabaas(
 );
 
 INSERT INTO praktikabaas (firmaID, praktikatingimused, arvutiprogramm, juhendajaID) VALUES
-(1, 'Kontoritöö', 'Excel', 1),
+(1, 'KontoritÃ¶Ã¶', 'Excel', 1),
 (1, 'IT tugi', 'HelpDesk', 2),
 (2, 'Arendus', 'Visual Studio', 3),
 (3, 'Testimine', 'Jira', 4),
-(4, 'Andmeanalüüs', 'Power BI', 5),
+(4, 'AndmeanalÃ¼Ã¼s', 'Power BI', 5),
 (5, 'Arendus', 'IntelliJ', 1),
-(3, 'Kontoritöö', 'Office', 2),
+(3, 'KontoritÃ¶Ã¶', 'Office', 2),
 (2, 'IT tugi', 'ServiceDesk', 4);
 
 Select * From praktikabaas;
 
---Firmad, mille nimes sisaldub „a“
+--Firmad, mille nimes sisaldub â€žaâ€œ
 SELECT * FROM firma
 WHERE firmanimi LIKE '%a%';
 
@@ -71,7 +71,7 @@ FROM praktikabaas
 JOIN firma ON firma.firmaID = praktikabaas.firmaID
 GROUP BY firmanimi;
 
---Sügisel sündinud juhendajad
+--SÃ¼gisel sÃ¼ndinud juhendajad
 SELECT *
 FROM praktikajuhendaja
 WHERE MONTH(synniaeg) = 9 
@@ -94,7 +94,7 @@ ADD palk DECIMAL(8,2);
 
 Select * From praktikajuhendaja;
 
---Täida palgad
+--TÃ¤ida palgad
 UPDATE praktikajuhendaja SET palk = 1800 WHERE praktikajuhendajaID = 1;
 UPDATE praktikajuhendaja SET palk = 1500 WHERE praktikajuhendajaID = 2;
 UPDATE praktikajuhendaja SET palk = 2200 WHERE praktikajuhendajaID = 3;
@@ -111,21 +111,21 @@ FROM praktikajuhendaja;
 SELECT SUM(palk) AS kogupalk
 FROM praktikajuhendaja;
 
---Minu enda päring (näide)
+--Minu enda pÃ¤ring (nÃ¤ide)
 SELECT firma.firmanimi, praktikabaas.arvutiprogramm
 FROM praktikabaas
 JOIN firma ON firma.firmaID = praktikabaas.firmaID
 WHERE arvutiprogramm = 'Excel';
 
 --VIEW-de loomine
---Firma praktikakohtade arv (põhineb päringul 3)
+--Firma praktikakohtade arv (pÃµhineb pÃ¤ringul 3)
 CREATE VIEW vw_firma_praktikakohad AS
 SELECT firmanimi, COUNT(praktikabaasID) AS kogus
 FROM praktikabaas
 JOIN firma ON firma.firmaID = praktikabaas.firmaID
 GROUP BY firmanimi;
 
---Sügisel sündinud juhendajad
+--SÃ¼gisel sÃ¼ndinud juhendajad
 
 CREATE VIEW vw_sugisel_sundinud AS
 SELECT *
@@ -155,7 +155,7 @@ GO
 Select * From firma;
 
 --Protseduur: lisa uus veerg tabelisse praktikajuhendaja
---SQL Server lubab ALTER TABLE otse protseduuris — seega see töötab:
+--SQL Server lubab ALTER TABLE otse protseduuris â€” seega see tÃ¶Ã¶tab:
 DROP PROCEDURE IF EXISTS lisaVeergPalk;
 GO
 CREATE PROCEDURE lisaVeergPalk
