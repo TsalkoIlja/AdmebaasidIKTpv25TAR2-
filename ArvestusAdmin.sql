@@ -88,7 +88,7 @@ GO
 
 SELECT * FROM AADRESS;
 
--- Test 9.2: Muudame äsja loodud kirjet (Käivitub triger trg_Elamine_Uuenda)
+-- Muudame äsja loodud kirjet (Käivitub triger trg_Elamine_Uuenda)
 UPDATE ELAMINE SET kommentaar = 'Muudetud isikNimi sessioonis' WHERE elamine_ID = 1;
 GO
 
