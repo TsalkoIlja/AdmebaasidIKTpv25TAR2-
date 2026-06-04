@@ -5,6 +5,12 @@ ALTER TABLE AADRESS DROP COLUMN riik;
 
 INSERT INTO ELAMINE (isik_ID, aadress_ID, alates) VALUES (1, 1, '2026-06-04');
 
+-- Пользователь isikNimi обновляет только что созданную запись
+UPDATE ELAMINE 
+SET kommentaar = 'Kasutaja poolt muudetud tekst' 
+WHERE elamine_ID = 1;
+GO
+
 SELECT * FROM ELAMINE;
 
 
